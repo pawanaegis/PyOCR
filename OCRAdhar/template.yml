@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: OCR Lambda Function Example
+
+Resources:
+  ocrapp:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: app.lambda_handler
+      Runtime: python3.10
+      CodeUri: .
+      MemorySize: 128
+      Timeout: 30
+      Role: YourLambdaExecutionRole  # Replace with the actual execution role ARN
+      Events:
+        MyApi:
+          Type: Api
+          Properties:
+            Path: /
+            Method: POST
+
+Outputs:
+  OCRFunctionApi:
+    Description: "API Gateway endpoint URL for the OCR function"
+    Value:
+      Fn::Sub: "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/ocr"
