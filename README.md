@@ -4,7 +4,10 @@ sudo ./aws/install
 sudo ./aws/sam-installation/install
 sudo apt install libgl1-mesa-glx
 sudo apt install tesseract-ocr
-source .venv/bin/activate
+pyenv install 3.10.12
+pyenv local 3.10.12
+python -m venv my_env
+source my_env/bin/activate
 python -m ensurepip --default-pip
 
 https://i.ibb.co/w4MDvx1/1000093681-UNITED-AADHAAR.jpg

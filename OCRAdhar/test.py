@@ -6,42 +6,62 @@ from PIL import Image
 import json
 from AADHAAR_EXTRACTOR.Extractor import AadhaarExtractor
 
+event = {
+    "path": "/",
+    "httpMethod": "POST",
+    "queryStringParameters": {
+        "url": "https://i.ibb.co/5M3FQGy/1000093687-BAJAJ-AADHAAR.jpg"
+    }
+}
 
-url = event['queryStringParameters']['url']
+def lambda_handler(event, context):
+    try:
+        # Check if the event contains a URL parameter
+        if 'url' not in event['queryStringParameters']:
+            return {
+                'statusCode': 400,
+                'body': 'Missing URL parameter'
+            }
+
+        # Get the URL parameter
+        url = event['queryStringParameters']['url']
 
         # Create a temporary directory to store the downloaded image
-temp_dir = tempfile.mkdtemp()
+        temp_dir = tempfile.mkdtemp()
 
         # Download the image from the URL
-image_path = os.path.join(temp_dir, 'image.png')
-urllib.request.urlretrieve(url, image_path)
+        image_path = os.path.join(temp_dir, 'image.png')
+        urllib.request.urlretrieve(url, image_path)
 
         # Perform OCR on the downloaded image
-image = Image.open(image_path)
+        image = Image.open(image_path)
         # ocr_text = pytesseract.image_to_string(image)
-obj = AadhaarExtractor(image)
-extractedData = obj.extract()
-aadhaar_numbers = []
-for data in extractedData:
-    if data[1] == 'aadhaar_no' and data[3] is not None:
-        aadhaar_numbers.append(data[3])
+        obj = AadhaarExtractor(image_path)
+        extractedData = obj.extract()
+        aadhaar_numbers = []
+        print(extractedData,"data from image")
+        for data in extractedData:
+            if data[1] == 'aadhaar_no' and data[3] is not None:
+                aadhaar_numbers.append(data[3])
 
-        
-ocr_text = list(set(aadhaar_numbers))
-aadhaar_no = ', '.join(ocr_text)
+        ocr_text = list(set(aadhaar_numbers))
+        aadhaar_no = ', '.join(ocr_text)
         
 
         # Clean up the temporary directory
-os.remove(image_path)
-os.rmdir(temp_dir)
+        os.remove(image_path)
+        os.rmdir(temp_dir)
 
-    return {
-    'statusCode': 200,
-    'body': ocr_text
-            }
-    
-except Exception as e:
-return {
+        return {
+            'statusCode': 200,
+            'body': ocr_text
+        }
+    except Exception as e:
+        return {
             'statusCode': 500,
             'body': str(e)
         }
+        
+
+result = lambda_handler(event, None)
+print(result)
