@@ -10,7 +10,7 @@ event = {
     "path": "/",
     "httpMethod": "POST",
     "queryStringParameters": {
-        "url": "https://i.ibb.co/5M3FQGy/1000093687-BAJAJ-AADHAAR.jpg"
+        "url": "https://i.ibb.co/9yWbSLb/1000113203-SHRIRAM-AADHAAR.jpg"
     }
 }
 
@@ -39,8 +39,8 @@ def lambda_handler(event, context):
         obj = AadhaarExtractor(image_path)
         extractedData = obj.extract()
         aadhaar_numbers = []
-        print(extractedData,"data from image")
         for data in extractedData:
+            print(data)
             if data[1] == 'aadhaar_no' and data[3] is not None:
                 aadhaar_numbers.append(data[3])
 
